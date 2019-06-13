@@ -33,6 +33,12 @@
         android:inputType="textPassword" />
 
 
+    <CheckBox
+        android:id="@+id/cbKeepLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="keep me login" />
+
     <Button
         android:id="@+id/btIngresar"
         android:layout_width="match_parent"
@@ -41,4 +47,5 @@
 
         android:layout_marginTop="30dp"
         />
+
 </LinearLayout>

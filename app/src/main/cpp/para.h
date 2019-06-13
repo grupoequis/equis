@@ -29,15 +29,19 @@ extern "C" {
 
 
 #define smtp_domain_name "smtp.gmail.com"
-#define From "intentodecorreo2@gmail.com"
-#define TO  "grupoequismail@gmail.com"
 #define smtp_port  "587"
+
+#define imap_domain_name "imap.gmail.com"
+#define imap_port  "993"
 #define TRY 10
 
 
 int enviarMensaje();
 int open_fd;
 SSL *open_ssl;
+int open_imap_fd;
+SSL *open_imap_ssl;
+
 
 
 char User[100];
@@ -48,7 +52,9 @@ char* IniciarCorreo(const char* mail, const char* password);
 
 char* EnviarCorreo(const char* from, const char* to,const char* subject, const char * message);
 
-void CloseConnection();
+void CloseEverything(int fd, SSL* ssl);
+
+void CloseConnection(int fd);
 int ConnectToServer(char* server_addr,char* port);
 int connectSocket(const char *const server,
                  const char *const port);

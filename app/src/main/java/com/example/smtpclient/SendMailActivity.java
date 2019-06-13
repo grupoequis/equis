@@ -1,5 +1,6 @@
 package com.example.smtpclient;
 
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -13,6 +14,7 @@ public class SendMailActivity extends AppCompatActivity implements View.OnClickL
     EditText etMailContent;
     EditText etMailSubject;
     Button btMailSend;
+    Button btLogout;
 
     static {
         System.loadLibrary("native-lib");
@@ -26,8 +28,11 @@ public class SendMailActivity extends AppCompatActivity implements View.OnClickL
         etMailSubject = findViewById(R.id.etMailSubject);
         btMailSend = findViewById(R.id.btMailSend);
         btMailSend.setOnClickListener(this);
+        btLogout = findViewById(R.id.btlogout);
+        btLogout.setOnClickListener(this);
     }
     public native String SendMail(String to,String subject,String message);
+    public native void logout();
 
 
     @Override
@@ -39,6 +44,20 @@ public class SendMailActivity extends AppCompatActivity implements View.OnClickL
                 String subject = etMailSubject.getText().toString();
                 String resultado = SendMail(to,subject,message);
                 Toast.makeText(getApplicationContext(),resultado,Toast.LENGTH_SHORT);
+                break;
+            case R.id.btlogout:
+                logout();
+                SharedPreferences sharedPreferences = getSharedPreferences(MainActivity.SHARED_PREFS,MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                editor.putString(MainActivity.EMAILKEY, "");
+                editor.putString(MainActivity.PASSWORDKEY, "");
+                editor.apply();
+
+                MainActivity.setEmail("");
+                MainActivity.setPassword("");
+                finish();
+                break;
         }
     }
 }

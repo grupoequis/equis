@@ -65,3 +65,10 @@ Java_com_example_smtpclient_SendMailActivity_SendMail(
     resultado = EnviarCorreo(emisor,env->GetStringUTFChars(to,0), env->GetStringUTFChars(subject,0),env->GetStringUTFChars(message,0));
     return env->NewStringUTF(resultado.c_str());
 }
+
+extern "C" JNIEXPORT void JNICALL
+Java_com_example_smtpclient_SendMailActivity_logout(
+        JNIEnv *env,
+        jobject /* this */) {
+    CloseEverything();
+}

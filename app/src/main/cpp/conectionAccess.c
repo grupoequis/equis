@@ -46,8 +46,17 @@ int connectSocket(const char *const server,
     return sock;
 }
 
-void CloseConnection(){
-    if(open_fd){
+void CloseEverything(int fd, SSL* ssl){
+
+    if(ssl){
+        SSL_shutdown(open_ssl);
+        open_ssl = 0;
+    }
+    CloseConnection(fd);
+
+}
+void CloseConnection(int fd){
+    if(fd){
         close(open_fd);
         open_fd = -1;
     }

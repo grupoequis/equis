@@ -55,4 +55,14 @@
         android:text="Send"
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="115dp" />
+
+    <Button
+        android:id="@+id/btlogout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="logout"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="bottom"/>
+
 </LinearLayout>
