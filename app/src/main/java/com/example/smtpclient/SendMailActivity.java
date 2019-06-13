@@ -19,6 +19,7 @@ public class SendMailActivity extends AppCompatActivity implements View.OnClickL
     static {
         System.loadLibrary("native-lib");
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
