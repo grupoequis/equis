@@ -33,6 +33,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        String res;
+        res = IniciarImap("intentodecorreo2@gmail.com","z1x2c3v4b5n6m7");
+        String inbox = "";
+        if(res.contains("Confirmado")){
+            inbox = listarCorreos();
+        }
+        Intent i = new Intent(this,MailActivity.class);
+        i.putExtra("lista",inbox);
+        startActivity(i);
+        startService();
         loadData();
 
         final TextView tv = findViewById(R.id.sample_text);
@@ -62,6 +72,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static String getPassword() {
         return MainActivity.password;
     }
+
+    public native String listarCorreos();
+
+    public native String IniciarImap(String mail,String password);
 
     /**
      * A native method that is implemented by the 'native-lib' native library,
@@ -120,6 +134,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         };
     }
 
+    public void startService(){
+
+        Intent serviceIntent = new Intent(this,MailNotificationService.class);
+        //serviceIntent.putExtra();
+
+        startService(serviceIntent);
+    }
+
+    public void stopService(){
+        Intent serviceIntent = new Intent(this,MailNotificationService.class);
+        stopService(serviceIntent);
+    }
+    public void IniciarImap(){
+        Thread t =  new Thread(){
+            public void run(){
+                try{
+                    String res;
+                    res = IniciarImap(MainActivity.getEmail(),MainActivity.getPassword());
+                    String inbox = "";
+                    if(res.contains("Confirmado")){
+                        inbox = listarCorreos();
+                    }
+                    Intent i = new Intent(MainActivity.this,MailActivity.class);
+                    i.putExtra("lista",inbox);
+                    startActivity(i);
+                }catch (Exception c){
+
+                }finally {
+
+                }
+
+            }
+        };
+    }
     @Override
     public void onClick(View v) {
         Toast.makeText(getApplicationContext(),"iniciando conexion",Toast.LENGTH_SHORT).show();
@@ -134,6 +182,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     return;
                 if(cbSave.isChecked())
                     saveData();
+
                 Intent i = new Intent(this,SendMailActivity.class);
                 startActivity(i);
                 break;

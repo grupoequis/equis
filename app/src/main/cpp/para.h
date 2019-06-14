@@ -35,13 +35,15 @@ extern "C" {
 #define imap_port  "993"
 #define TRY 10
 
+    char mensajeRecibido[1000];
+//char* revisarCorreo();
 
 int enviarMensaje();
 int open_fd;
 SSL *open_ssl;
 int open_imap_fd;
 SSL *open_imap_ssl;
-
+char* revisarLista();
 
 
 char User[100];
@@ -53,7 +55,7 @@ char* IniciarCorreo(const char* mail, const char* password);
 char* EnviarCorreo(const char* from, const char* to,const char* subject, const char * message);
 
 void CloseEverything(int fd, SSL* ssl);
-
+char* IniciarImap(const char* mail, const char* password);
 void CloseConnection(int fd);
 int ConnectToServer(char* server_addr,char* port);
 int connectSocket(const char *const server,
@@ -65,6 +67,7 @@ char* MailHeader(const char* from, const char* to, const char* subject,
 char *base64_encode(char* encoded_data,const unsigned char * data,
                     size_t input_length);
 void build_decoding_table();
+char* esperarRespuesta();
 void base64_cleanup();
 
 #ifdef __cplusplus

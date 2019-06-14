@@ -17,7 +17,7 @@ char* IniciarCorreo(const char* mail, const char* password){
     char estado[1000];
 
     if(open_fd > 0) {
-        CloseConnection();
+        CloseConnection(open_fd);
     }
     for (int i = 0; i < TRY && open_fd <= 0; ++i) {
         ConnectToServer(smtp_domain_name,smtp_port);

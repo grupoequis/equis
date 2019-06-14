@@ -22,4 +22,9 @@
         app:headerLayout="@layout/nav_header_mail"
         app:menu="@menu/activity_mail_drawer" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvListaCorreos"
+        />
 </android.support.v4.widget.DrawerLayout>

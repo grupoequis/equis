@@ -70,5 +70,45 @@ extern "C" JNIEXPORT void JNICALL
 Java_com_example_smtpclient_SendMailActivity_logout(
         JNIEnv *env,
         jobject /* this */) {
-    CloseEverything();
+    CloseEverything(open_fd,open_ssl);
+}
+
+extern "C" JNIEXPORT jstring JNICALL
+Java_com_example_smtpclient_MainActivity_listarCorreos(
+        JNIEnv *env,
+        jobject /* this */) {
+    std::string resultado;
+    bool b = true;
+    resultado = revisarLista();
+    return env->NewStringUTF(resultado.c_str());
+}
+
+extern "C" JNIEXPORT jstring JNICALL
+Java_com_example_smtpclient_MainActivity_IniciarImap(
+        JNIEnv *env,
+        jobject /* this */, jstring mail, jstring password) {
+    std::string resultado;
+    bool b = true;
+    resultado = IniciarImap(env->GetStringUTFChars(mail,0), env->GetStringUTFChars(password,0));
+    for (int i = 0; resultado == conexionError && i < 10; ++i) {
+        resultado = IniciarImap(env->GetStringUTFChars(mail,0), env->GetStringUTFChars(password,0));
+    }
+    return env->NewStringUTF(resultado.c_str());
+}
+
+extern "C" JNIEXPORT jstring JNICALL
+Java_com_example_smtpclient_MailNotificationService_EsperarCorreo(
+        JNIEnv *env,
+        jobject /* this */, jstring mail, jstring password) {
+    std::string resultado;
+    bool b = true;
+    resultado = esperarRespuesta();
+    for (int i = 0; resultado == conexionError && i < 10; ++i) {
+        resultado = IniciarImap(env->GetStringUTFChars(mail,0), env->GetStringUTFChars(password,0));
+    }
+    if(strstr(&resultado[0],"NO") ){
+        return env->NewStringUTF(resultado.c_str());
+    }
+    resultado = esperarRespuesta();
+    return env->NewStringUTF(resultado.c_str());
 }
