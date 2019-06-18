@@ -44,7 +44,7 @@ public class SendMailActivity extends AppCompatActivity implements View.OnClickL
                 String message = etMailContent.getText().toString();
                 String subject = etMailSubject.getText().toString();
                 String resultado = SendMail(to,subject,message);
-                Toast.makeText(getApplicationContext(),resultado,Toast.LENGTH_SHORT);
+                Toast.makeText(getApplicationContext(),resultado,Toast.LENGTH_SHORT).show();
                 break;
             case R.id.btlogout:
                 logout();

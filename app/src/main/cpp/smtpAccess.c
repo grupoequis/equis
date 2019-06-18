@@ -16,6 +16,7 @@ char* IniciarCorreo(const char* mail, const char* password){
 
     if(open_smtp_fd > 0) {
         CloseConnection(open_smtp_fd);
+        open_smtp_fd = -1;
     }
     for (int i = 0; i < TRY && open_smtp_fd <= 0; ++i) {
         open_smtp_fd =  ConnectToServer(smtp_domain_name,smtp_port);
@@ -161,12 +162,12 @@ char* EnviarCorreo(const char* from, const char* to,const char* subject, const c
     char estado[1000];
 
     SSL *ssl = open_smtp_ssl;
-
+    IniciarCorreo(User,Password);
     for (int i = 0; i < TRY && !open_smtp_ssl; ++i) {
         IniciarCorreo(User,Password);
     }
-    ssl = open_ssl;
-    if(!open_ssl)
+    ssl = open_smtp_ssl;
+    if(open_smtp_ssl <= 0)
         return conexionError;
 
     char *header = MailHeader(from,to,subject,"text/plain","US-ASCII");
@@ -189,8 +190,8 @@ char* EnviarCorreo(const char* from, const char* to,const char* subject, const c
 
     sdsd = SSL_read(ssl, (void *) (recv_buff + recvd), sizeof(recv_buff) - recvd);
     if(sdsd <= 0){
-        open_fd = 0;
-        open_ssl = 0;
+        open_smtp_fd = 0;
+        open_smtp_ssl = 0;
         return conexionError;
     }
     recvd += sdsd;

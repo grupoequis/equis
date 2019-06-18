@@ -49,6 +49,7 @@ char* revisarLista();
 char User[100];
 char Password[100];
 char emisor[1000];
+char ActualMailBox[100];
 
 char* IniciarCorreo(const char* mail, const char* password);
 

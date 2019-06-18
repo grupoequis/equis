@@ -44,7 +44,7 @@ char* IniciarImap(const char* mail, const char* password){
     if(retSSL <= 0 ){
         retSSL = SSL_get_error(ssl, retSSL);
         close(open_imap_fd);
-        open_fd = -1;
+        open_imap_ssl = 0;
         open_imap_fd = -1;
         return conexionError;
     }
@@ -87,8 +87,12 @@ char* esperarRespuesta(){
     strcpy(command,"tag idle\r\n");
     SSL_write(open_imap_ssl,command,strlen(command));
     SSL_read(open_imap_ssl,ImapServerMessage,10000);
-    if(!strchr(ImapServerMessage,'+')){
-        return "Error idling";
+    int ret;
+    for(int i;i<TRY && !strchr(ImapServerMessage,'+');i++){
+        ret = SSL_read(open_imap_ssl,ImapServerMessage,10000);
+        if(ret < 0){
+            return "No conectado";
+        }
     }
     int n = 0;
     int NN;
@@ -115,9 +119,12 @@ char* esperarRespuesta(){
 
 char* chageMailBox(char* mailBox){
     char command[1000];
+    if(!strcmp(ActualMailBox,mailBox))
+        return "Success";
     sprintf(command,"tag select %s\r\n",mailBox);
     SSL_write(open_imap_ssl,command,strlen(command));
     SSL_read(open_imap_ssl,ImapServerMessage,1000);
+    strcpy(ActualMailBox,mailBox);
     return ImapServerMessage;
 }
 char* revisarLista(){
@@ -131,12 +138,15 @@ char* revisarLista(){
     return mensajeRecibido;
 
 }
+/*
 char* EsperarMensajes(){
     char command[1000];
     strcpy(command,"tag fetch %d body[text]\r\n");
     SSL_write(open_imap_ssl,command,strlen(command));
     SSL_read(open_imap_ssl,ImapServerMessage,10000);
+
 }
+*/
 char* selectMailList(char* list){
     int res;
     char command[1000];

@@ -37,17 +37,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        String res;
-        res = IniciarImap("intentodecorreo2@gmail.com","z1x2c3v4b5n6m7");
-        String inbox = "";
-        if(res.contains("Confirmado")){
-            inbox = listarCorreos();
-        }
-        Intent i = new Intent(this,MailActivity.class);
-        i.putExtra("lista",inbox);
-        //startActivity(i);
-        startService();
-        //Esperar();
         loadData();
 
         final TextView tv = findViewById(R.id.sample_text);

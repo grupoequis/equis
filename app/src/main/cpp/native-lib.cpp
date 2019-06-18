@@ -62,7 +62,9 @@ Java_com_example_smtpclient_SendMailActivity_SendMail(
         jobject /* this */, jstring to, jstring subject, jstring message) {
     std::string resultado;
     bool b = true;
-    resultado = EnviarCorreo(emisor,env->GetStringUTFChars(to,0), env->GetStringUTFChars(subject,0),env->GetStringUTFChars(message,0));
+    for (int i = 0; i < TRY && !strstr(resultado.c_str(),"enviado") ; ++i) {
+        resultado = EnviarCorreo(emisor,env->GetStringUTFChars(to,0), env->GetStringUTFChars(subject,0),env->GetStringUTFChars(message,0));
+    }
     return env->NewStringUTF(resultado.c_str());
 }
 
@@ -70,7 +72,15 @@ extern "C" JNIEXPORT void JNICALL
 Java_com_example_smtpclient_SendMailActivity_logout(
         JNIEnv *env,
         jobject /* this */) {
-    CloseEverything(open_fd,open_ssl);
+    if(open_imap_fd > 0){
+        close(open_imap_fd);
+        open_imap_fd = -1;
+    }
+    if(open_smtp_fd > 0){
+        close(open_smtp_fd);
+        open_smtp_fd = -1;
+    }
+    
 }
 
 extern "C" JNIEXPORT jstring JNICALL
