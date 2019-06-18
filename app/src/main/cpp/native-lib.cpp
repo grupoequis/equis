@@ -109,6 +109,5 @@ Java_com_example_smtpclient_MailNotificationService_EsperarCorreo(
     if(strstr(&resultado[0],"NO") ){
         return env->NewStringUTF(resultado.c_str());
     }
-    resultado = esperarRespuesta();
     return env->NewStringUTF(resultado.c_str());
 }

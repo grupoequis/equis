@@ -52,6 +52,8 @@ char emisor[1000];
 
 char* IniciarCorreo(const char* mail, const char* password);
 
+char* chageMailBox(char* mailBox);
+
 char* EnviarCorreo(const char* from, const char* to,const char* subject, const char * message);
 
 void CloseEverything(int fd, SSL* ssl);

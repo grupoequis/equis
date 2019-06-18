@@ -187,6 +187,7 @@ char* EnviarCorreo(const char* from, const char* to,const char* subject, const c
     for (int i = 0; i < TRY && !open_ssl; ++i) {
         IniciarCorreo(User,Password);
     }
+    ssl = open_ssl;
     if(!open_ssl)
         return conexionError;
 
@@ -209,7 +210,13 @@ char* EnviarCorreo(const char* from, const char* to,const char* subject, const c
     }
 
     sdsd = SSL_read(ssl, (void *) (recv_buff + recvd), sizeof(recv_buff) - recvd);
+    if(sdsd <= 0){
+        open_fd = 0;
+        open_ssl = 0;
+        return conexionError;
+    }
     recvd += sdsd;
+    //se daña aqui
     sprintf(estado, "%s\n", recv_buff + recvd - sdsd);
 
     sprintf(command,"%s<%s>\r\n","RCPT TO: ",to);
@@ -235,6 +242,7 @@ char* EnviarCorreo(const char* from, const char* to,const char* subject, const c
     while(necesario){
         dfdf = SSL_write(ssl,command+enviado,necesario);
         if(dfdf == -1){
+
             return conexionError;
         }
         enviado += dfdf;

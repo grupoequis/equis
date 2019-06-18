@@ -101,10 +101,44 @@ char* esperarRespuesta(){
     if(open_imap_fd <= 0 || open_imap_ssl <= 0){
         return "No connectado";
     }
+    chageMailBox("inbox");
+    char command[1000];
+    strcpy(command,"tag idle\r\n");
+    SSL_write(open_imap_ssl,command,strlen(command));
     SSL_read(open_imap_ssl,ImapServerMessage,10000);
-    return ImapServerMessage;
+    if(!strchr(ImapServerMessage,'+')){
+        return "Error idling";
+    }
+    int n = 0;
+    int NN;
+    int len;
+    while(1){
+        SSL_read(open_imap_ssl,ImapServerMessage,10000);
+        sscanf(ImapServerMessage,"* %d EXISTS",&NN);
+        if(NN>n){
+            strcpy(command,"done\r\n");
+            SSL_write(open_imap_ssl,command,strlen(command));
+            SSL_read(open_imap_ssl,command,1000);
+            sprintf(command,"tag fetch %d body[header.fields (subject from)]\r\n",NN);
+            SSL_write(open_imap_ssl,command,strlen(command));
+            len = SSL_read(open_imap_ssl,ImapServerMessage,10000);
+            len = SSL_read(open_imap_ssl,ImapServerMessage,10000);
+            ImapServerMessage[len] = 0;
+            n = NN;
+            return ImapServerMessage;
+        }
+    }
+
+    //return ImapServerMessage;
 }
 
+char* chageMailBox(char* mailBox){
+    char command[1000];
+    sprintf(command,"tag select %s\r\n",mailBox);
+    SSL_write(open_imap_ssl,command,strlen(command));
+    SSL_read(open_imap_ssl,ImapServerMessage,1000);
+    return ImapServerMessage;
+}
 char* revisarLista(){
     if(open_imap_ssl <= 0)
         return "No open";
@@ -115,6 +149,12 @@ char* revisarLista(){
     SSL_read(open_imap_ssl,mensajeRecibido,1000);
     return mensajeRecibido;
 
+}
+char* EsperarMensajes(){
+    char command[1000];
+    strcpy(command,"tag fetch %d body[text]\r\n");
+    SSL_write(open_imap_ssl,command,strlen(command));
+    SSL_read(open_imap_ssl,ImapServerMessage,10000);
 }
 char* selectMailList(char* list){
     int res;

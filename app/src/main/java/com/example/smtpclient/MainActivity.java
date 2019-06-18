@@ -1,7 +1,11 @@
 package com.example.smtpclient;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -41,8 +45,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         Intent i = new Intent(this,MailActivity.class);
         i.putExtra("lista",inbox);
-        startActivity(i);
+        //startActivity(i);
         startService();
+        //Esperar();
         loadData();
 
         final TextView tv = findViewById(R.id.sample_text);
@@ -63,6 +68,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static void setEmail(String email) {
         MainActivity.email = email;
 
+    }
+    public void Esperar(){
+        String message = "";
+
+        message = (String) MailNotificationService.EsperarCorreo(MainActivity.getEmail(),MainActivity.getPassword());
+        Intent notificationIntent = new Intent(this,MailActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,
+                0,notificationIntent,0);
+
+        Notification notification =  new NotificationCompat.Builder(this,MailNotificationService.CHANNEL_ID)
+                .setContentTitle("Nuevo mensaje")
+                .setContentText(message)
+                .setSmallIcon(R.drawable.ic_email)
+                .setContentIntent(pendingIntent)
+                .build();
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+        notificationManagerCompat.notify(1,notification);
     }
 
     public static String getEmail() {
@@ -103,6 +125,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Intent i = new Intent(this,SendMailActivity.class);
                 startActivity(i);
             }
+
+            String res;
+            res = IniciarImap(email,password);
+            String inbox = "";
+            if(res.contains("Confirmado")){
+                inbox = listarCorreos();
+            }
+            startService();
         }
 
     }
@@ -173,6 +203,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toast.makeText(getApplicationContext(),"iniciando conexion",Toast.LENGTH_SHORT).show();
         switch (v.getId()){
             case R.id.btIngresar:
+                stopService();
                 String mail = tvMail.getText().toString();
                 String password = tvPassword.getText().toString();
 
@@ -183,6 +214,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(cbSave.isChecked())
                     saveData();
 
+                String res;
+                res = IniciarImap(mail,password);
+                String inbox = "";
+                if(res.contains("Confirmado")){
+                    inbox = listarCorreos();
+                }
+                startService();
                 Intent i = new Intent(this,SendMailActivity.class);
                 startActivity(i);
                 break;

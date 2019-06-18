@@ -11,7 +11,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SendMailActivity"></activity>
+        <activity
+            android:name=".ReadMailActivity"
+            android:label="@string/title_activity_read_mail"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".MailboxListActivity" />
+        <activity android:name=".SendMailActivity" />
         <activity
             android:name=".MailActivity"
             android:label="@string/title_activity_mail"
@@ -29,7 +34,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".MailNotificationService"/>
+
+        <service android:name=".MailNotificationService" />
     </application>
 
 </manifest>
