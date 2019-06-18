@@ -6,9 +6,6 @@ extern char confirmado[];
 extern char mailEnviado[];
 char* IniciarImap(const char* mail, const char* password){
 
-    BIO *outbio = NULL;
-    const SSL_METHOD *method;
-    SSL_CTX *ctx;
     SSL *ssl;
     int necesario;
     int enviado;
@@ -29,23 +26,7 @@ char* IniciarImap(const char* mail, const char* password){
     }else{
         connected_fd = open_imap_fd;
     }
-
-    OpenSSL_add_all_algorithms();
-    ERR_load_BIO_strings();
-    ERR_load_crypto_strings();
-    SSL_load_error_strings();
-
-    outbio    = BIO_new(BIO_s_file());
-    outbio    = BIO_new_fp(stdout, BIO_NOCLOSE);
-
-    if(SSL_library_init() < 0){
-        BIO_printf(outbio, "Could not initialize the OpenSSL library !\n");
-    }
-
-    method = SSLv23_client_method();
-    ctx = SSL_CTX_new(method);
-    SSL_CTX_set_options(ctx, SSL_OP_NO_SSLv2);
-
+    SSL_CTX* ctx = InitCTX();
     int recvd = 0;
     char recv_buff[4768];
     int sdsd;

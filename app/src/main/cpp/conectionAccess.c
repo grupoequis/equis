@@ -4,6 +4,34 @@ char conexionError[] = "Error de conexion Intente de nuevo";
 char ErrorCredenciales[] = "Error al validar el mail, intente de nuevo";
 char confirmado[] = "Confirmado";
 char extern mailEnviado[];
+
+SSL_CTX* InitCTX(){
+
+    BIO *outbio = NULL;
+    const SSL_METHOD *method;
+    SSL_CTX *ctx;
+    OpenSSL_add_all_algorithms();
+    ERR_load_BIO_strings();
+    ERR_load_crypto_strings();
+    SSL_load_error_strings();
+
+    outbio    = BIO_new(BIO_s_file());
+    outbio    = BIO_new_fp(stdout, BIO_NOCLOSE);
+
+    if(SSL_library_init() < 0){
+        BIO_printf(outbio, "Could not initialize the OpenSSL library !\n");
+    }
+
+    method = SSLv23_client_method();
+    ctx = SSL_CTX_new(method);
+    SSL_CTX_set_options(ctx, SSL_OP_NO_SSLv2);
+
+    return ctx;
+}
+
+
+
+
 int connectSocket(const char *const server,
                  const char *const port){
     struct addrinfo hints;
@@ -46,27 +74,14 @@ int connectSocket(const char *const server,
     return sock;
 }
 
-void CloseEverything(int fd, SSL* ssl){
-
-    if(ssl){
-        SSL_shutdown(open_ssl);
-        open_ssl = 0;
-    }
-    CloseConnection(fd);
-
-}
 void CloseConnection(int fd){
     if(fd){
-        close(open_fd);
-        open_fd = -1;
+        close(fd);
     }
 }
 
 int ConnectToServer(char* server_addr,char* port){
 
-    if(open_fd > 0){
-        return open_fd;
-    }
-    open_fd = connectSocket(server_addr,port);
-    return open_fd;
+    return connectSocket(server_addr,port);
+
 }

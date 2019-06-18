@@ -6,8 +6,6 @@ extern char confirmado[];
 char mailEnviado[100] = "Se ha enviado el mail";
 char* IniciarCorreo(const char* mail, const char* password){
 
-    BIO *outbio = NULL;
-    const SSL_METHOD *method;
     SSL_CTX *ctx;
     SSL *ssl;
     int necesario;
@@ -16,36 +14,21 @@ char* IniciarCorreo(const char* mail, const char* password){
     char buff[1000];
     char estado[1000];
 
-    if(open_fd > 0) {
-        CloseConnection(open_fd);
+    if(open_smtp_fd > 0) {
+        CloseConnection(open_smtp_fd);
     }
-    for (int i = 0; i < TRY && open_fd <= 0; ++i) {
-        ConnectToServer(smtp_domain_name,smtp_port);
+    for (int i = 0; i < TRY && open_smtp_fd <= 0; ++i) {
+        open_smtp_fd =  ConnectToServer(smtp_domain_name,smtp_port);
 
     }
 
-    if(open_fd <= 0){
+    if(open_smtp_fd <= 0){
         return conexionError;
     }else{
-         connected_fd = open_fd;
+         connected_fd = open_smtp_fd;
     }
 
-    OpenSSL_add_all_algorithms();
-    ERR_load_BIO_strings();
-    ERR_load_crypto_strings();
-    SSL_load_error_strings();
-
-    outbio    = BIO_new(BIO_s_file());
-    outbio    = BIO_new_fp(stdout, BIO_NOCLOSE);
-
-    if(SSL_library_init() < 0){
-        BIO_printf(outbio, "Could not initialize the OpenSSL library !\n");
-    }
-
-    method = SSLv23_client_method();
-    ctx = SSL_CTX_new(method);
-    SSL_CTX_set_options(ctx, SSL_OP_NO_SSLv2);
-
+    ctx = InitCTX();
     int recvd = 0;
     char recv_buff[4768];
     int sdsd;
@@ -87,8 +70,8 @@ char* IniciarCorreo(const char* mail, const char* password){
     }
     if(retSSL <= 0 ){
         retSSL = SSL_get_error(ssl, retSSL);
-        close(open_fd);
-        open_fd = -1;
+        close(open_smtp_fd);
+        open_smtp_fd = -1;
         return conexionError;
     }
 
@@ -135,11 +118,6 @@ char* IniciarCorreo(const char* mail, const char* password){
         return conexionError;
     }
 
-
-    //printf("Ingrese el password:");
-    //scanf("%s\n",_cmd4);
-    //base64_encode(_cmd4,PWD,strlen(PWD));
-
     const unsigned char * pwd = (const unsigned char *)password;
     base64_encode(buff,pwd,strlen(password));
     strcat(buff, "\r\n");
@@ -158,7 +136,7 @@ char* IniciarCorreo(const char* mail, const char* password){
     recvd += sdsd;
     sprintf(estado, "recibido: %s\n", recv_buff + recvd - sdsd);
     if(strstr(estado,"Accepted")){
-        open_ssl = ssl;
+        open_smtp_ssl = ssl;
         strcpy(emisor,mail);
         strcpy(User,mail);
         strcpy(Password,password);
@@ -182,9 +160,9 @@ char* EnviarCorreo(const char* from, const char* to,const char* subject, const c
     char recv_buff[10000];
     char estado[1000];
 
-    SSL *ssl = open_ssl;
+    SSL *ssl = open_smtp_ssl;
 
-    for (int i = 0; i < TRY && !open_ssl; ++i) {
+    for (int i = 0; i < TRY && !open_smtp_ssl; ++i) {
         IniciarCorreo(User,Password);
     }
     ssl = open_ssl;

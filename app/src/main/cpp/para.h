@@ -39,8 +39,8 @@ extern "C" {
 //char* revisarCorreo();
 
 int enviarMensaje();
-int open_fd;
-SSL *open_ssl;
+int open_smtp_fd;
+SSL *open_smtp_ssl;
 int open_imap_fd;
 SSL *open_imap_ssl;
 char* revisarLista();
@@ -71,6 +71,7 @@ char *base64_encode(char* encoded_data,const unsigned char * data,
 void build_decoding_table();
 char* esperarRespuesta();
 void base64_cleanup();
+SSL_CTX* InitCTX();
 
 #ifdef __cplusplus
 }
