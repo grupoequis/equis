@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/black"
+    tools:context=".linearwriteMail">
+
+    <LinearLayout
+        android:layout_width="395dp"
+        android:layout_height="715dp"
+        android:orientation="vertical"
+        android:layout_gravity="center_horizontal"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="8dp">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Xmail"
+            android:textColor="#DDC4C1C1" />
+
+        <!-- POR SI SE QUIERE ATRAVESAR EL LOGO JEJE  (DESCOMENTAR PARA VER)
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="50dp"
+           android:layout_marginTop="25dp"
+
+           android:background="#000000"
+           android:orientation="horizontal">
+
+           <ImageView
+               android:id="@+id/imageView4"
+               android:layout_width="333dp"
+               android:layout_height="60dp"
+               android:layout_weight="1"
+               app:srcCompat="@drawable/littlelogo" />
+       </LinearLayout>
+        -->
+
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="40dp"
+           android:layout_marginTop="25dp"
+           android:layout_marginLeft="25dp"
+           android:layout_marginRight="15dp"
+           android:orientation="horizontal">
+
+
+           <ImageButton
+               android:id="@+id/cancel"
+               android:layout_width="100dp"
+               android:layout_height="wrap_content"
+               android:layout_gravity="left"
+               app:srcCompat="@drawable/buttonb" />
+
+           <ImageButton
+               android:id="@+id/send"
+               android:layout_width="100dp"
+               android:layout_marginLeft="160dp"
+               android:layout_height="wrap_content"
+               android:layout_gravity="right"
+               app:srcCompat="@drawable/buttonb" />
+
+       </LinearLayout>
+
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="46dp"
+           android:translationY="20dp"
+           android:layout_marginRight="15dp"
+           android:orientation="horizontal"
+           android:layout_marginLeft="25dp"
+           >
+
+           <TextView
+               android:id="@+id/textView1"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="Para:"
+               android:textColor="#FA989899"
+               android:textSize="20sp"
+               android:translationY="10dp"
+
+               />
+
+           <EditText
+               android:id="@+id/para"
+               android:layout_width="match_parent"
+               android:layout_height="45dp"
+               android:background="#7E464444"
+               android:ems="10"
+               android:inputType="textPersonName"
+               android:textColor="#D7BEBCBC"
+               android:textColorHighlight='"#FA989899"'
+               android:textColorHint='"#FA989899"'
+               android:textColorLink='"#FA989899"'
+               android:textCursorDrawable="@drawable/grey"
+               android:textSize="18sp"
+               android:translationX="5dp"
+               android:translationY="10dp" />
+
+       </LinearLayout>
+
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="51dp"
+           android:orientation="horizontal"
+           android:layout_marginRight="15dp"
+           android:layout_marginLeft="25dp"
+           android:translationY="30dp">
+
+
+           <TextView
+               android:id="@+id/textView2"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="Asunto:"
+               android:textColor="#FA989899"
+               android:textSize="20sp"
+               android:translationY="10dp"
+               />
+
+           <EditText
+               android:id="@+id/asunto"
+               android:layout_width="match_parent"
+               android:layout_height="45dp"
+               android:background="#7E464444"
+               android:ems="10"
+               android:inputType="textPersonName"
+               android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+               android:textColor="#D7BEBCBC"
+               android:textColorHighlight="#D7BEBCBC"
+               android:textColorHint="#D7BEBCBC"
+               android:textColorLink="#D7BEBCBC"
+               android:textCursorDrawable="#D7BEBCBC"
+               android:textSize="18sp"
+               android:translationX="5dp"
+               android:translationY="10dp" />
+       </LinearLayout>
+
+       <EditText
+           android:id="@+id/content"
+           android:layout_width="match_parent"
+           android:layout_height="331dp"
+           android:layout_marginLeft="15dp"
+           android:layout_marginRight="15dp"
+           android:background="#7E464444"
+           android:gravity="start|top"
+           android:inputType="textMultiLine"
+           android:scrollbarAlwaysDrawVerticalTrack="true"
+           android:textColor="#D7BEBCBC"
+           android:textColorHighlight="#D7BEBCBC"
+           android:textColorHint="#D7BEBCBC"
+           android:textColorLink="#D7BEBCBC"
+           android:textCursorDrawable="#D7BEBCBC"
+           android:textIsSelectable="true"
+           android:textSize="18sp"
+           android:translationY="60dp" />
+
+        <ImageButton
+            android:id="@+id/imageButton"
+            android:layout_height="50dp"
+            app:srcCompat="@drawable/doc" />
+
+        <ImageButton
+            android:id="@+id/file_button"
+            style="@android:style/Widget.Holo.Light.ImageButton"
+            android:layout_width="81dp"
+            android:layout_height="85dp"
+            android:layout_gravity="center_horizontal"
+            android:tint="#5C000000"
+            android:translationY="20dp"
+            app:srcCompat="@drawable/docu" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
