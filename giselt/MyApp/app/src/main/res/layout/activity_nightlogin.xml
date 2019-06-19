@@ -14,14 +14,14 @@
         android:layout_height="150dp"
         android:layout_centerHorizontal="true"
         android:translationY="70dp"
-        app:srcCompat="@drawable/Logo" />
+        app:srcCompat="@drawable/logo" />
 
     <EditText
         android:id="@+id/night_email"
         android:layout_width="305dp"
         android:layout_height="47dp"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/Campo"
+        android:background="@drawable/campo"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="@string/prompt_email"
@@ -37,7 +37,7 @@
         android:layout_width="305dp"
         android:layout_height="47dp"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/Campo"
+        android:background="@drawable/campo"
         android:drawableLeft="@drawable/ic_action_password"
         android:ems="10"
         android:inputType="textPersonName"

@@ -21,10 +21,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     static {
         System.loadLibrary("native-lib");
     }
-    private Button btInterfas;
     private EditText tvMail, tvPassword;
     private TextView tvMuestra;
     private CheckBox cbSave;
+    private TextView tvLogin;
 
     public static final String SHARED_PREFS= "sharedPrefs";
     public static final String EMAILKEY = "saved_email";
@@ -37,16 +37,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        loadData();
-
-        final TextView tv = findViewById(R.id.sample_text);
-        tv.setText("presiona el boton");
+        //loadData();
         tvMail = findViewById(R.id.etMail);
         tvPassword = findViewById(R.id.etPassword);
-        btInterfas = findViewById(R.id.btIngresar);
-        tvMuestra = findViewById(R.id.sample_text);
-        btInterfas.setOnClickListener(this);
-        cbSave = findViewById(R.id.cbKeepLogin);
+        tvLogin = findViewById(R.id.tvLogIn);
+
+        tvLogin.setOnClickListener(this);
     }
 
     public static void setPassword(String password) {
@@ -191,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         Toast.makeText(getApplicationContext(),"iniciando conexion",Toast.LENGTH_SHORT).show();
         switch (v.getId()){
-            case R.id.btIngresar:
+            case R.id.tvLogIn:
                 stopService();
                 String mail = tvMail.getText().toString();
                 String password = tvPassword.getText().toString();

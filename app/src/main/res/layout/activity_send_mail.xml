@@ -2,67 +2,121 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/black"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:layout_gravity="center_horizontal"
+    tools:layout_editor_absoluteX="8dp"
+    tools:layout_editor_absoluteY="8dp"
     tools:context=".SendMailActivity">
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Destino:"/>
-    <EditText
-        android:id="@+id/etMailFrom"
+        android:layout_gravity="center_horizontal"
+        android:text="Xmail"
+        android:textColor="#DDC4C1C1" />
+        <TextView
+            android:id="@+id/text_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:textColor="#D7F0EBEB"
+            android:textSize="18sp"
+            android:layout_marginLeft="25dp"
+            />
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="ejemplo@gmail.com"
-        android:inputType="textEmailAddress"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="16dp" />
+        android:layout_height="46dp"
+        android:translationY="40dp"
+        android:layout_marginRight="15dp"
+        android:orientation="horizontal"
+        android:layout_marginLeft="25dp"
+        >
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Para:"
+            android:textColor="#FA989899"
+            android:textSize="20sp"
+            android:translationY="10dp"
+
+            />
+
+        <EditText
+            android:id="@+id/para"
+            android:layout_width="300dp"
+            android:layout_height="45dp"
+            android:background="#7E464444"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:textColor="#D7BEBCBC"
+            android:textSize="18sp"
+            android:translationX="5dp"
+            android:translationY="10dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="51dp"
+        android:orientation="horizontal"
+        android:layout_marginRight="15dp"
+        android:layout_marginLeft="25dp"
+        android:translationY="60dp">
+
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Asunto:"
+            android:textColor="#FA989899"
+            android:textSize="20sp"
+            android:translationY="10dp"
+            />
+
+        <EditText
+            android:id="@+id/asunto"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:background="#7E464444"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="#D7BEBCBC"
+            android:textSize="18sp"
+            android:translationX="5dp"
+            android:translationY="10dp" />
+    </LinearLayout>
 
     <EditText
-        android:id="@+id/etMailSubject"
+        android:id="@+id/content"
+        android:layout_marginRight="15dp"
+        android:layout_marginLeft="15dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:hint="Subject"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="61dp" />
-
-    <EditText
-        android:id="@+id/etMailContent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:hint="Content"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="61dp" />
+        android:layout_height="331dp"
+        android:background="#7E464444"
+        android:translationY="100dp"
+        android:gravity="start|top"
+        android:inputType="textMultiLine"
+        android:scrollbarAlwaysDrawVerticalTrack="true"/>
 
 
-    <Button
-        android:id="@+id/btMailSend"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Send"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="115dp" />
+        <TextView
+            android:id="@+id/text_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Send"
+            android:textColor="#D7F0EBEB"
+            android:textSize="24sp"
+            android:translationY="8dp"
+            android:layout_marginLeft="40dp"/>
 
-    <Button
-        android:id="@+id/btlogout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="logout"
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_gravity="bottom"/>
 
 </LinearLayout>

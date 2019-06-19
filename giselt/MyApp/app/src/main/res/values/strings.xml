@@ -12,10 +12,8 @@
     <string name="login_failed">"Login failed"</string>
     <string name="title_activity_inbox">Inbox</string>
     <string name="button">Button</string>
-    <string name="switch">Switch</string>
+    <string name="leswitch">Switch</string>
     <string name="title_activity_minbox">MInbox</string>
-    <string name="grupo_equis">Grupo Equis</string>
-    <string name="switch">Switch</string>
     <string name="grupo_equis">Grupo Equis</string>
     <string name="IB">IB</string>
 </resources>

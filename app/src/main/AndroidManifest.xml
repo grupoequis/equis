@@ -16,7 +16,18 @@
             android:label="@string/title_activity_read_mail"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity android:name=".MailboxListActivity" />
-        <activity android:name=".SendMailActivity" />
+
+        <activity
+            android:name=".SendMailActivity"
+            android:label="@string/title_activity_mail"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.SENDMAILACTIVITY" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".MailActivity"
             android:label="@string/title_activity_mail"

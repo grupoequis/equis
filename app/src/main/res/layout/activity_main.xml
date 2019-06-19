@@ -1,51 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+
+<ScrollView android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/sample_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="GRUPO EQUIS"
-        android:layout_marginTop="2mm"
-        android:layout_marginLeft="25mm"/>
-
-
-    <EditText
-        android:id="@+id/etMail"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="ejemplo@gmail.com"
-        android:inputType="textEmailAddress" />
+        android:layout_height="match_parent"
+        android:background="@drawable/bg"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        tools:context=".MainActivity">
 
-    <EditText
-        android:id="@+id/etPassword"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="password"
-        android:inputType="textPassword" />
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="140dp"
+            android:layout_height="129dp"
+            android:translationY="100dp"
+            android:layout_gravity="center_horizontal"
+            app:srcCompat="@drawable/logo" />
+
+        <TextView
+            android:id="@+id/night_login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:lineSpacingExtra="5dp"
+            android:text="Log in to XMail"
+            android:textColor="#D7F0EBEB"
+            android:textSize="24dp"
+            android:translationY="100dp" />
+
+        <EditText
+            android:id="@+id/etMail"
+            android:layout_width="wrap_content"
+            android:layout_height="47dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/campo"
+            android:ems="10"
+            android:inputType="textEmailAddress"
+            android:text="Email"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="#B5928B8B"
+            android:textSize="18sp"
+            android:translationY="130dp"
+            android:drawableLeft="@drawable/ic_action_email"
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="25dp"
+            />
 
 
-    <CheckBox
-        android:id="@+id/cbKeepLogin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="keep me login" />
+        <EditText
+            android:id="@+id/etPassword"
+            android:layout_width="wrap_content"
+            android:layout_height="47dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/campo"
+            android:ems="10"
+            android:inputType="textPassword"
+            android:text="Passworrthjrttrd"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="#B5928B8B"
+            android:textSize="18sp"
+            android:translationY="150dp"
+            android:drawableLeft="@drawable/ic_action_password"
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="25dp"
+            />
 
-    <Button
-        android:id="@+id/btIngresar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Ingresar"
+        <CheckBox
+            android:id="@+id/night_checkBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Remember me"
+            android:textColor="#DFA09B9B"
+            android:textColorHint="#008A8080"
+            android:textSize="12dp"
+            android:layout_marginLeft="25dp"
+            android:translationY="150dp"
+            />
 
-        android:layout_marginTop="30dp"
-        />
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/tvLogIn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Log In"
+            android:textColor="#D7F0EBEB"
+            android:textSize="20sp"
+            android:translationY="130dp" />
+
+        <Switch
+            android:id="@+id/night_Mode"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="Night Mode On "
+            android:textColor="#B2DBDBDB"
+            android:layout_gravity="right"
+            android:layout_marginRight="25dp"
+            android:translationY="220dp"
+            />
+
+    </LinearLayout>
+</ScrollView>
