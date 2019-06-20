@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView tvMuestra;
     private CheckBox cbSave;
     private TextView tvLogin;
+    private ImageButton ibLogin;
 
     public static final String SHARED_PREFS= "sharedPrefs";
     public static final String EMAILKEY = "saved_email";
@@ -40,9 +42,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //loadData();
         tvMail = findViewById(R.id.etMail);
         tvPassword = findViewById(R.id.etPassword);
-        tvLogin = findViewById(R.id.tvLogIn);
-
-        tvLogin.setOnClickListener(this);
+        //tvLogin = findViewById(R.id.tvLogIn);
+        ibLogin = findViewById(R.id.ibLogin);
+        cbSave = findViewById(R.id.cbSave);
+        ibLogin.setOnClickListener(this);
     }
 
     public static void setPassword(String password) {
@@ -187,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         Toast.makeText(getApplicationContext(),"iniciando conexion",Toast.LENGTH_SHORT).show();
         switch (v.getId()){
-            case R.id.tvLogIn:
+            case R.id.ibLogin:
                 stopService();
                 String mail = tvMail.getText().toString();
                 String password = tvPassword.getText().toString();
