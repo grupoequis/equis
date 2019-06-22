@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //loadData();
+        loadData();
         tvMail = findViewById(R.id.etMail);
         tvPassword = findViewById(R.id.etPassword);
         //tvLogin = findViewById(R.id.tvLogIn);

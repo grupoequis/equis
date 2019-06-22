@@ -1,8 +1,26 @@
 #include <jni.h>
 #include <string>
-
+#include <queue>
+#include <utility>
+#include <string>
 #include "para.h"
 
+class androidFile{
+public:
+    std::string filename;
+    std::string path;
+    std::string mimetype;
+    androidFile(std::string name,std::string path,std::string mime){
+        filename = name;
+        this->path = path;
+        mimetype = mime;
+    }
+
+
+};
+std::queue<androidFile> files;
+//std::queue<std::pair<std::string,std::string> > files;
+//std::queue<std::string> mimes;
 extern char conexionError[];
 char* IniciarCorreo(const char* mail,const char* password);
 
@@ -42,6 +60,13 @@ Java_com_example_smtpclient_MainActivity_ConnectarSocket(
     return resultado;
 }
 */
+extern "C" JNIEXPORT void JNICALL
+Java_com_example_smtpclient_SendMailActivity_AddFile(
+        JNIEnv *env,
+        jobject /* this */, jstring filename,jstring path, jstring mimeType) {
+    files.push(androidFile(env->GetStringUTFChars(filename,0),env->GetStringUTFChars(path,0),env->GetStringUTFChars(mimeType,0) ) );
+}
+
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_example_smtpclient_MainActivity_AutenticarCorreo(
         JNIEnv *env,
@@ -68,6 +93,16 @@ Java_com_example_smtpclient_SendMailActivity_SendMail(
     return env->NewStringUTF(resultado.c_str());
 }
 
+int getFileName(){
+    if(!files.size()){
+        return 0;
+    }
+    strcpy(filename,files.front().filename.c_str());
+    strcpy(mimeType,files.front().mimetype.c_str());
+    strcpy(filepath,files.front().path.c_str());
+    files.pop();
+    return 1;
+}
 extern "C" JNIEXPORT void JNICALL
 Java_com_example_smtpclient_SendMailActivity_logout(
         JNIEnv *env,

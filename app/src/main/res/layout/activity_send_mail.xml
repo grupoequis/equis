@@ -1,122 +1,205 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@drawable/black"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:layout_gravity="center_horizontal"
-    tools:layout_editor_absoluteX="8dp"
-    tools:layout_editor_absoluteY="8dp"
+    android:background="@drawable/black"
     tools:context=".SendMailActivity">
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="Xmail"
-        android:textColor="#DDC4C1C1" />
-        <TextView
-            android:id="@+id/text_cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Cancel"
-            android:textColor="#D7F0EBEB"
-            android:textSize="18sp"
-            android:layout_marginLeft="25dp"
-            />
-
-    <LinearLayout
+    <ScrollView
+        android:id="@+id/scroll"
         android:layout_width="match_parent"
-        android:layout_height="46dp"
-        android:translationY="40dp"
-        android:layout_marginRight="15dp"
-        android:orientation="horizontal"
-        android:layout_marginLeft="25dp"
-        >
 
-        <TextView
-            android:id="@+id/textView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Para:"
-            android:textColor="#FA989899"
-            android:textSize="20sp"
-            android:translationY="10dp"
+        android:layout_height="match_parent">
 
-            />
-
-        <EditText
-            android:id="@+id/para"
-            android:layout_width="300dp"
-            android:layout_height="45dp"
-            android:background="#7E464444"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:textColor="#D7BEBCBC"
-            android:textSize="18sp"
-            android:translationX="5dp"
-            android:translationY="10dp" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="51dp"
-        android:orientation="horizontal"
-        android:layout_marginRight="15dp"
-        android:layout_marginLeft="25dp"
-        android:translationY="60dp">
-
-
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Asunto:"
-            android:textColor="#FA989899"
-            android:textSize="20sp"
-            android:translationY="10dp"
-            />
-
-        <EditText
-            android:id="@+id/asunto"
+        <LinearLayout
+            android:id="@+id/container"
             android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:background="#7E464444"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="#D7BEBCBC"
-            android:textSize="18sp"
-            android:translationX="5dp"
-            android:translationY="10dp" />
-    </LinearLayout>
-
-    <EditText
-        android:id="@+id/content"
-        android:layout_marginRight="15dp"
-        android:layout_marginLeft="15dp"
-        android:layout_width="match_parent"
-        android:layout_height="331dp"
-        android:background="#7E464444"
-        android:translationY="100dp"
-        android:gravity="start|top"
-        android:inputType="textMultiLine"
-        android:scrollbarAlwaysDrawVerticalTrack="true"/>
+            android:layout_height="match_parent"
+            android:background="@drawable/black"
+            android:orientation="vertical">
 
 
-        <TextView
-            android:id="@+id/text_send"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Send"
-            android:textColor="#D7F0EBEB"
-            android:textSize="24sp"
-            android:translationY="8dp"
-            android:layout_marginLeft="40dp"/>
+            <LinearLayout
+                tools:layout_editor_absoluteX="8dp"
+                tools:layout_editor_absoluteY="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:orientation="vertical"
+                android:scrollbarAlwaysDrawVerticalTrack="true">
 
 
-</LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="Xmail"
+                    android:textColor="#DDC4C1C1" />
+
+                <!-- POR SI SE QUIERE ATRAVESAR EL LOGO JEJE  (DESCOMENTAR PARA VER)
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="50dp"
+               android:layout_marginTop="25dp"
+
+               android:background="#000000"
+               android:orientation="horizontal">
+
+               <ImageView
+                   android:id="@+id/imageView4"
+                   android:layout_width="333dp"
+                   android:layout_height="60dp"
+                   android:layout_weight="1"
+                   app:srcCompat="@drawable/littlelogo" />
+           </LinearLayout>
+            -->
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginRight="15dp"
+                    android:orientation="horizontal">
+
+
+                    <ImageButton
+                        android:id="@+id/btCancel"
+                        app:srcCompat="@drawable/buttonb"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left" />
+
+                    <ImageButton
+                        android:id="@+id/btSend"
+                        app:srcCompat="@drawable/buttonb"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:layout_marginLeft="160dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="46dp"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="15dp"
+                    android:orientation="horizontal"
+                    android:translationY="20dp">
+
+                    <TextView
+                        android:id="@+id/textView1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Para:"
+                        android:textColor="#FA989899"
+                        android:textSize="20sp"
+                        android:translationY="10dp"
+
+                        />
+
+                    <EditText
+                        android:id="@+id/etMailTo"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:background="#7E464444"
+                        android:ems="10"
+                        android:text="grupoequismail@gmail.com"
+                        android:inputType="textPersonName"
+                        android:textColor="#D7BEBCBC"
+                        android:textColorHighlight="#FA989899"
+                        android:textColorHint="#FA989899"
+                        android:textColorLink="#FA989899"
+                        android:textCursorDrawable="@drawable/grey"
+                        android:textSize="18sp"
+                        android:translationX="5dp"
+                        android:translationY="10dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="51dp"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="15dp"
+                    android:orientation="horizontal"
+                    android:translationY="30dp">
+
+
+                    <TextView
+                        android:id="@+id/textView2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Asunto:"
+                        android:textColor="#FA989899"
+                        android:textSize="20sp"
+                        android:translationY="10dp" />
+
+                    <EditText
+                        android:id="@+id/etMailSubject"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:background="#7E464444"
+                        android:ems="10"
+                        android:text="testingMail"
+                        android:inputType="textPersonName"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:textColor="#D7BEBCBC"
+                        android:textColorHighlight="#D7BEBCBC"
+                        android:textColorHint="#D7BEBCBC"
+                        android:textColorLink="#D7BEBCBC"
+                        android:textSize="18sp"
+                        android:translationX="5dp"
+                        android:translationY="10dp" />
+                </LinearLayout>
+
+                <EditText
+                    android:id="@+id/etContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="331dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:background="#7E464444"
+                    android:gravity="start|top"
+                    android:inputType="textMultiLine"
+                    android:scrollbarAlwaysDrawVerticalTrack="true"
+                    android:textColor="#D7BEBCBC"
+                    android:textColorHighlight="#D7BEBCBC"
+                    android:textColorHint="#D7BEBCBC"
+                    android:textColorLink="#D7BEBCBC"
+                    android:textIsSelectable="true"
+                    android:textSize="18sp"
+                    android:translationY="60dp" />
+
+
+                <ImageButton
+                    android:id="@+id/btAttachFile"
+                    style="@android:style/Widget.Holo.Light.ImageButton"
+                    app:srcCompat="@drawable/docu"
+                    android:layout_width="81dp"
+                    android:layout_height="85dp"
+                    android:layout_gravity="center_horizontal"
+                    android:tint="#5C000000"
+                    android:translationY="20dp" />
+
+                <TextView
+                    android:id="@+id/relleno"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="."
+                    android:layout_marginTop="25dp"
+                    android:textColor="#FD0C0B0B" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </ScrollView>
+
+</RelativeLayout>

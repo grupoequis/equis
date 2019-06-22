@@ -1,4 +1,5 @@
 
+#include <fcntl.h>
 #include "para.h"
 extern char conexionError[];
 extern char ErrorCredenciales[];
@@ -150,18 +151,17 @@ char* IniciarCorreo(const char* mail, const char* password){
 
 }
 
-
-
 char* EnviarCorreo(const char* from, const char* to,const char* subject, const char * message){
     int necesario;
     int enviado;
     int dfdf;
     int sdsd;
-    int recvd;
+    int recvd = 0;
     char recv_buff[10000];
     char estado[1000];
 
     SSL *ssl = open_smtp_ssl;
+    open_smtp_ssl = 0;
     IniciarCorreo(User,Password);
     for (int i = 0; i < TRY && !open_smtp_ssl; ++i) {
         IniciarCorreo(User,Password);
@@ -170,8 +170,7 @@ char* EnviarCorreo(const char* from, const char* to,const char* subject, const c
     if(open_smtp_ssl <= 0)
         return conexionError;
 
-    char *header = MailHeader(from,to,subject,"text/plain","US-ASCII");
-
+    char *header = MailHeader(from,to,subject,"multipart/mixed;","US-ASCII");
     char command[1000];
     //strcpy(command,"MAIL FROM: ");
     sprintf(command,"%s<%s>\r\n","MAIL FROM: ",from);
@@ -241,10 +240,33 @@ char* EnviarCorreo(const char* from, const char* to,const char* subject, const c
         enviado += dfdf;
         necesario -= dfdf;
     }
+    char filebase64[1024];
+    char filebuffer[4 * ((1025 + 2) / 3)];
+    char* name;
+    while(getFileName()){
+        strcpy(command,"--unique-boundary-1\r\n");
+        sprintf(command+strlen(command),"Content-Type: %s; name=\"%s\"\r\n",mimeType,filename);
+        sprintf(command+strlen(command),"Content-Disposition: attachment; filename=\"%s\"\r\n",filename);
+        strcat(command,"Content-Transfer-Encoding: base64\r\n");
+        printf("enviando %s\n",command);
+        SSL_write(ssl,command,strlen(command));
+        strcpy(filebuffer,filepath);
+        int musicfd = open(filepath,O_RDONLY);
+        int bytesRead;
+        bytesRead = read(musicfd,filebuffer,1024);
+        while(bytesRead){
+            base64_encode(filebase64,filebuffer,bytesRead);
+            SSL_write(ssl,filebase64,strlen(filebase64));
+            bytesRead = read(musicfd,filename,1024);
+        }
+        strcpy(command,"\r\n");
+        SSL_write(ssl,command,strlen(command));
+        close(musicfd);
 
-    //strcpy(command,"prueba de envio de mail de android\r\n");
-    sprintf(command,"%s\r\n",message);
-    //strcpy(_cmd8,"chamo pero tu si eres marico");
+    }
+    strcpy(command,"--unique-boundary-1\r\n");
+    sprintf(command+strlen(command),"Content-Type: text/plain;charset=\"UTF-8\"\r\n");
+    sprintf(command+strlen(command),"%s\r\n",message);
     printf("enviando %s\n",command);
     necesario = strlen(command);
     enviado = 0;

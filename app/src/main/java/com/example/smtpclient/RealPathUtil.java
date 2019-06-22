@@ -1,133 +1,79 @@
 package com.example.smtpclient;
 
-import android.content.ContentResolver;
+import android.annotation.SuppressLint;
 import android.content.ContentUris;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.provider.OpenableColumns;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.View;
-import android.webkit.MimeTypeMap;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.support.v4.content.CursorLoader;
 
-import java.io.File;
-import java.util.ArrayList;
+public class RealPathUtil {
 
-public class SendMailActivity extends AppCompatActivity implements View.OnClickListener{
-
-    EditText etMailTo;
-    EditText etMailContent;
-    EditText etMailSubject;
-    ImageButton btSend;
-    ImageButton btCancel;
-    ImageButton btFile;
-    static {
-        System.loadLibrary("native-lib");
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_send_mail);
-        etMailContent = findViewById(R.id.etContent);
-        etMailTo = findViewById(R.id.etMailTo);
-        etMailSubject = findViewById(R.id.etMailSubject);
-        btSend = findViewById(R.id.btSend);
-        btSend.setOnClickListener(this);
-        btCancel = findViewById(R.id.btCancel);
-        btCancel.setOnClickListener(this);
-        btFile = findViewById(R.id.btAttachFile);
-        btFile.setOnClickListener(this);
-    }
-    public native String SendMail(String to,String subject,String message);
-    public native void logout();
-    public native void AddFile(String filename,String path,String mimetype);
-
-    ArrayList<String> archivos = new ArrayList<>();
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(requestCode==10){
-            if(resultCode==RESULT_OK){
-                Uri returnUri = data.getData();
-                String mimeType = getContentResolver().getType(returnUri);
-                String real = RealPathUtil.getRealPath(this,returnUri);
-                Cursor returnCursor =
-                        getContentResolver().query(returnUri, null, null, null, null);
-
-                int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-                int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
-                returnCursor.moveToFirst();
-                String name = returnCursor.getString(nameIndex);
-                //Uri path = Uri.fromFile(new File(data.getData().getPath()));
-                //String mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(path.toString()));
-                AddFile(name,returnUri.getPath(), mimeType);
-            }
+    public static String getRealPath(Context context, Uri fileUri) {
+        String realPath;
+        // SDK < API11
+        if (Build.VERSION.SDK_INT < 11) {
+            realPath = RealPathUtil.getRealPathFromURI_BelowAPI11(context, fileUri);
         }
+        // SDK >= 11 && SDK < 19
+        else if (Build.VERSION.SDK_INT < 19) {
+            realPath = RealPathUtil.getRealPathFromURI_API11to18(context, fileUri);
+        }
+        // SDK > 19 (Android 4.4) and up
+        else {
+            realPath = RealPathUtil.getRealPathFromURI_API19(context, fileUri);
+        }
+        return realPath;
     }
 
-    private String getRealPathFromURI(Uri contentURI) {
-        String filePath;
-        Cursor cursor = getContentResolver().query(contentURI, null, null, null, null);
-        if (cursor == null) {
-            filePath = contentURI.getPath();
-        } else {
+
+    @SuppressLint("NewApi")
+    public static String getRealPathFromURI_API11to18(Context context, Uri contentUri) {
+        String[] proj = {MediaStore.Images.Media.DATA};
+        String result = null;
+
+        CursorLoader cursorLoader = new CursorLoader(context, contentUri, proj, null, null, null);
+        Cursor cursor = cursorLoader.loadInBackground();
+
+        if (cursor != null) {
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
             cursor.moveToFirst();
-            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-            filePath = cursor.getString(idx);
+            result = cursor.getString(column_index);
             cursor.close();
         }
-        return filePath;
+        return result;
     }
 
-    @Override
-    public void onClick(View v) {
-
-        switch (v.getId()){
-            case R.id.btSend:
-                String to = etMailTo.getText().toString();
-                String message = etMailContent.getText().toString();
-                String subject = etMailSubject.getText().toString();
-
-                String resultado = SendMail(to,subject,message);
-                Toast.makeText(getApplicationContext(),resultado,Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.btCancel:
-                logout();
-                SharedPreferences sharedPreferences = getSharedPreferences(MainActivity.SHARED_PREFS,MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-
-                editor.putString(MainActivity.EMAILKEY, "");
-                editor.putString(MainActivity.PASSWORDKEY, "");
-                editor.apply();
-
-                MainActivity.setEmail("");
-                MainActivity.setPassword("");
-                finish();
-                break;
-            case R.id.btAttachFile:
-                Intent picker = new Intent(Intent.ACTION_GET_CONTENT);
-                picker.setType("*/*");
-                startActivityForResult(picker,10);
-
-                break;
+    public static String getRealPathFromURI_BelowAPI11(Context context, Uri contentUri) {
+        String[] proj = {MediaStore.Images.Media.DATA};
+        Cursor cursor = context.getContentResolver().query(contentUri, proj, null, null, null);
+        int column_index = 0;
+        String result = "";
+        if (cursor != null) {
+            column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            result = cursor.getString(column_index);
+            cursor.close();
+            return result;
         }
-
+        return result;
     }
 
-    public static String getPathFromUri(final Context context, final Uri uri) {
+    /**
+     * Get a file path from a Uri. This will get the the path for Storage Access
+     * Framework Documents, as well as the _data field for the MediaStore and
+     * other file-based ContentProviders.
+     *
+     * @param context The context.
+     * @param uri     The Uri to query.
+     * @author paulburke
+     */
+    @SuppressLint("NewApi")
+    public static String getRealPathFromURI_API19(final Context context, final Uri uri) {
 
         final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
 
@@ -170,7 +116,7 @@ public class SendMailActivity extends AppCompatActivity implements View.OnClickL
                 }
 
                 final String selection = "_id=?";
-                final String[] selectionArgs = new String[] {
+                final String[] selectionArgs = new String[]{
                         split[1]
                 };
 
@@ -194,6 +140,16 @@ public class SendMailActivity extends AppCompatActivity implements View.OnClickL
         return null;
     }
 
+    /**
+     * Get the value of the data column for this Uri. This is useful for
+     * MediaStore Uris, and other file-based ContentProviders.
+     *
+     * @param context       The context.
+     * @param uri           The Uri to query.
+     * @param selection     (Optional) Filter used in the query.
+     * @param selectionArgs (Optional) Selection arguments used in the query.
+     * @return The value of the _data column, which is typically a file path.
+     */
     public static String getDataColumn(Context context, Uri uri, String selection,
                                        String[] selectionArgs) {
 
