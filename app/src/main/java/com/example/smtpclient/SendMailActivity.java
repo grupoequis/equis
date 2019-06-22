@@ -1,10 +1,13 @@
 package com.example.smtpclient;
 
+import android.Manifest;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -13,31 +16,39 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.MimeTypeMap;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
-public class SendMailActivity extends AppCompatActivity implements View.OnClickListener{
+public class SendMailActivity extends AppCompatActivity implements View.OnClickListener, ListView.OnItemClickListener{
 
     EditText etMailTo;
     EditText etMailContent;
     EditText etMailSubject;
-    ImageButton btSend;
-    ImageButton btCancel;
+    Button btSend;
+    Button btCancel;
     ImageButton btFile;
+    ListView lvAttachments;
     static {
         System.loadLibrary("native-lib");
     }
-
+    ArrayAdapter<String> adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,16 +62,63 @@ public class SendMailActivity extends AppCompatActivity implements View.OnClickL
         btCancel.setOnClickListener(this);
         btFile = findViewById(R.id.btAttachFile);
         btFile.setOnClickListener(this);
+        lvAttachments = findViewById(R.id.lvAttachments);
+
+        adapter = new ArrayAdapter<>(this,android.R.layout.simple_expandable_list_item_1,attachments);
+        lvAttachments.setAdapter(adapter);
+        lvAttachments.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+                AlertDialog.Builder adb = new AlertDialog.Builder(SendMailActivity.this);
+                adb.setMessage("Desea eliminar: " + attachments.get(position) )
+                        .setCancelable(false)
+                        .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        String name = attachments.get(position);
+                                        RemoveFile(name);
+                                        attachments.remove(position);
+                                        adapter.notifyDataSetChanged();
+                                        mailSize -= sizes.get(name);
+                                    }
+                                })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+                    adb.create().show();
+            }
+        });
     }
     public native String SendMail(String to,String subject,String message);
     public native void logout();
+    public native void RemoveFile(String file);
+    public native void AddRCPT(String mail);
     public native void AddFile(String filename,String path,String mimetype);
-
-    ArrayList<String> archivos = new ArrayList<>();
+    public final long MAXSIZE = 26214000;
+    ArrayList<String> attachments = new ArrayList<String>();
+    HashMap<String, Integer> sizes = new HashMap<>();
+    private long mailSize = 0;
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if(requestCode==10){
             if(resultCode==RESULT_OK){
+                if (ContextCompat.checkSelfPermission(this,
+                        Manifest.permission.READ_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                            Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    } else {
+                        ActivityCompat.requestPermissions(this,
+                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},0);
+                    }
+                }
+
+
+
+
                 Uri returnUri = data.getData();
                 String mimeType = getContentResolver().getType(returnUri);
                 String real = RealPathUtil.getRealPath(this,returnUri);
@@ -71,9 +129,18 @@ public class SendMailActivity extends AppCompatActivity implements View.OnClickL
                 int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
                 returnCursor.moveToFirst();
                 String name = returnCursor.getString(nameIndex);
-                //Uri path = Uri.fromFile(new File(data.getData().getPath()));
-                //String mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(path.toString()));
-                AddFile(name,returnUri.getPath(), mimeType);
+                long size = returnCursor.getLong(sizeIndex);
+                if(mailSize + size < MAXSIZE){
+                    mailSize += size;
+
+                    AddFile(name,real, mimeType);
+                    attachments.add(name);
+                    sizes.put(name,(int)size);
+                    adapter.notifyDataSetChanged();
+
+                }else{
+                    Toast.makeText(this,"Sobrepaso el limite de archivos",Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }
@@ -100,6 +167,10 @@ public class SendMailActivity extends AppCompatActivity implements View.OnClickL
                 String to = etMailTo.getText().toString();
                 String message = etMailContent.getText().toString();
                 String subject = etMailSubject.getText().toString();
+                String[] recipients = to.split(" ");
+                for(String rcpt : recipients){
+                    AddRCPT(rcpt);
+                }
 
                 String resultado = SendMail(to,subject,message);
                 Toast.makeText(getApplicationContext(),resultado,Toast.LENGTH_SHORT).show();
@@ -123,131 +194,14 @@ public class SendMailActivity extends AppCompatActivity implements View.OnClickL
                 startActivityForResult(picker,10);
 
                 break;
+            case R.id.lvAttachments:
+
         }
 
     }
 
-    public static String getPathFromUri(final Context context, final Uri uri) {
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-        final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
-
-        // DocumentProvider
-        if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
-            // ExternalStorageProvider
-            if (isExternalStorageDocument(uri)) {
-                final String docId = DocumentsContract.getDocumentId(uri);
-                final String[] split = docId.split(":");
-                final String type = split[0];
-
-                if ("primary".equalsIgnoreCase(type)) {
-                    return Environment.getExternalStorageDirectory() + "/" + split[1];
-                }
-
-                // TODO handle non-primary volumes
-            }
-            // DownloadsProvider
-            else if (isDownloadsDocument(uri)) {
-
-                final String id = DocumentsContract.getDocumentId(uri);
-                final Uri contentUri = ContentUris.withAppendedId(
-                        Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
-
-                return getDataColumn(context, contentUri, null, null);
-            }
-            // MediaProvider
-            else if (isMediaDocument(uri)) {
-                final String docId = DocumentsContract.getDocumentId(uri);
-                final String[] split = docId.split(":");
-                final String type = split[0];
-
-                Uri contentUri = null;
-                if ("image".equals(type)) {
-                    contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-                } else if ("video".equals(type)) {
-                    contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-                } else if ("audio".equals(type)) {
-                    contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-                }
-
-                final String selection = "_id=?";
-                final String[] selectionArgs = new String[] {
-                        split[1]
-                };
-
-                return getDataColumn(context, contentUri, selection, selectionArgs);
-            }
-        }
-        // MediaStore (and general)
-        else if ("content".equalsIgnoreCase(uri.getScheme())) {
-
-            // Return the remote address
-            if (isGooglePhotosUri(uri))
-                return uri.getLastPathSegment();
-
-            return getDataColumn(context, uri, null, null);
-        }
-        // File
-        else if ("file".equalsIgnoreCase(uri.getScheme())) {
-            return uri.getPath();
-        }
-
-        return null;
     }
-
-    public static String getDataColumn(Context context, Uri uri, String selection,
-                                       String[] selectionArgs) {
-
-        Cursor cursor = null;
-        final String column = "_data";
-        final String[] projection = {
-                column
-        };
-
-        try {
-            cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs,
-                    null);
-            if (cursor != null && cursor.moveToFirst()) {
-                final int index = cursor.getColumnIndexOrThrow(column);
-                return cursor.getString(index);
-            }
-        } finally {
-            if (cursor != null)
-                cursor.close();
-        }
-        return null;
-    }
-
-
-    /**
-     * @param uri The Uri to check.
-     * @return Whether the Uri authority is ExternalStorageProvider.
-     */
-    public static boolean isExternalStorageDocument(Uri uri) {
-        return "com.android.externalstorage.documents".equals(uri.getAuthority());
-    }
-
-    /**
-     * @param uri The Uri to check.
-     * @return Whether the Uri authority is DownloadsProvider.
-     */
-    public static boolean isDownloadsDocument(Uri uri) {
-        return "com.android.providers.downloads.documents".equals(uri.getAuthority());
-    }
-
-    /**
-     * @param uri The Uri to check.
-     * @return Whether the Uri authority is MediaProvider.
-     */
-    public static boolean isMediaDocument(Uri uri) {
-        return "com.android.providers.media.documents".equals(uri.getAuthority());
-    }
-
-    /**
-     * @param uri The Uri to check.
-     * @return Whether the Uri authority is Google Photos.
-     */
-    public static boolean isGooglePhotosUri(Uri uri) {
-        return "com.google.android.apps.photos.content".equals(uri.getAuthority());
-    }
-
 }

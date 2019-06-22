@@ -45,18 +45,20 @@ int open_imap_fd;
 SSL *open_imap_ssl;
 char* revisarLista();
 
-#define MAXBUFFERSIZE 10000
+#define MAXBUFFERSIZE 26214500
 
 char User[100];
 char Password[100];
 char emisor[1000];
 char ActualMailBox[100];
 char bufferMensaje[MAXBUFFERSIZE];
+char filebase64[4 * ((MAXBUFFERSIZE + 2) / 3)];
 char filename[100];
 char mimeType[100];
 char filepath[100];
+char rcptmail[100];
 int getFileName();
-
+int getRCPT();
 char* IniciarCorreo(const char* mail, const char* password);
 
 char* chageMailBox(char* mailBox);

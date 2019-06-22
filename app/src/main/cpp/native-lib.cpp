@@ -2,7 +2,9 @@
 #include <string>
 #include <queue>
 #include <utility>
+#include <list>
 #include <string>
+#include <vector>
 #include "para.h"
 
 class androidFile{
@@ -16,55 +18,56 @@ public:
         mimetype = mime;
     }
 
+    androidFile(std::string name){
+        filename = name;
+        this->path = "";
+        mimetype = "";
+    }
+
+    bool operator ==(const androidFile& af) const{
+        if(filename == af.filename)
+            return true;
+        return false;
+    }
+
+
 
 };
-std::queue<androidFile> files;
+std::list<androidFile> files;
+std::list<std::string> destinos;
 //std::queue<std::pair<std::string,std::string> > files;
 //std::queue<std::string> mimes;
 extern char conexionError[];
 char* IniciarCorreo(const char* mail,const char* password);
 
-/*
-extern "C" JNIEXPORT jstring JNICALL
-Java_com_example_smtpclient_MainActivity_stringFromJNI(
+extern "C" JNIEXPORT void JNICALL
+Java_com_example_smtpclient_SendMailActivity_AddRCPT(
         JNIEnv *env,
-        jobject  this ) {
-    std::string hello;
-    if(enviarMensaje() == 1){
-        hello = "Mensaje enviado";
-    } else
-        hello = "Error intente de nuevo";
-    return env->NewStringUTF(hello.c_str());
+        jobject /* this */, jstring mail) {
+    destinos.push_back(env->GetStringUTFChars(mail,0) );
 }
-*/
-/*
-extern "C" JNIEXPORT jstring JNICALL
-Java_com_example_smtpclient_MainActivity_enviarMensaje(
-        JNIEnv *env,
-        jobject  this ) {
-    std::string resultado;
-    if(enviarMensaje() == 1){
-        resultado = "Mensaje enviado";
-    } else
-        resultado = "Error intente de nuevo";
-    return env->NewStringUTF(resultado.c_str());
+
+int getRCPT(){
+    if(destinos.empty()){
+        return 0;
+    }
+    strcpy(rcptmail,destinos.front().c_str());
+    return 1;
 }
-*/
-/*
-extern "C" JNIEXPORT jint JNICALL
-Java_com_example_smtpclient_MainActivity_ConnectarSocket(
-        JNIEnv *env,
-        jobject , jstring port, jstring ip) {
-    int resultado;
-    resultado = ConnectToServer((const char *const)port,(const char *const)ip);
-    return resultado;
-}
-*/
+
 extern "C" JNIEXPORT void JNICALL
 Java_com_example_smtpclient_SendMailActivity_AddFile(
         JNIEnv *env,
         jobject /* this */, jstring filename,jstring path, jstring mimeType) {
-    files.push(androidFile(env->GetStringUTFChars(filename,0),env->GetStringUTFChars(path,0),env->GetStringUTFChars(mimeType,0) ) );
+    files.push_back(androidFile(env->GetStringUTFChars(filename,0),env->GetStringUTFChars(path,0),env->GetStringUTFChars(mimeType,0) ) );
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_com_example_smtpclient_SendMailActivity_RemoveFile(
+        JNIEnv *env,
+        jobject /* this */, jstring filename) {
+
+    files.remove(androidFile(env->GetStringUTFChars(filename,0)) );
 }
 
 extern "C" JNIEXPORT jstring JNICALL
@@ -92,15 +95,18 @@ Java_com_example_smtpclient_SendMailActivity_SendMail(
     }
     return env->NewStringUTF(resultado.c_str());
 }
-
+bool empty = false;
 int getFileName(){
-    if(!files.size()){
+    int size = files.size();
+    if(empty){
         return 0;
     }
+    if(size == 1)
+        empty = true;
     strcpy(filename,files.front().filename.c_str());
     strcpy(mimeType,files.front().mimetype.c_str());
     strcpy(filepath,files.front().path.c_str());
-    files.pop();
+    files.pop_front();
     return 1;
 }
 extern "C" JNIEXPORT void JNICALL

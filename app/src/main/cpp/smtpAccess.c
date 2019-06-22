@@ -197,22 +197,22 @@ char* EnviarCorreo(const char* from, const char* to,const char* subject, const c
     //se daña aqui
     sprintf(estado, "%s\n", recv_buff + recvd - sdsd);
 
-    sprintf(command,"%s<%s>\r\n","RCPT TO: ",to);
-    printf("%s\n",command);
-    necesario = strlen(command);
-    enviado = 0;
-    while(necesario){
-        dfdf = SSL_write(ssl,command+enviado,necesario);
-        if(dfdf == -1){
-            return conexionError;
+    while(getRCPT()) {
+        sprintf(command, "%s<%s>\r\n", "RCPT TO: ", rcptmail);
+        necesario = strlen(command);
+        enviado = 0;
+        while (necesario) {
+            dfdf = SSL_write(ssl, command + enviado, necesario);
+            if (dfdf == -1) {
+                return conexionError;
+            }
+            enviado += dfdf;
+            necesario -= dfdf;
         }
-        enviado += dfdf;
-        necesario -= dfdf;
+        sdsd = SSL_read(ssl, (void *) (recv_buff + recvd), sizeof(recv_buff) - recvd);
+        recvd += sdsd;
+        sprintf(estado, "%s\n", recv_buff + recvd - sdsd);
     }
-    sdsd = SSL_read(ssl, (void *) (recv_buff + recvd), sizeof(recv_buff) - recvd);
-    recvd += sdsd;
-    sprintf(estado, "%s\n", recv_buff + recvd - sdsd);
-
     strcpy(command,"DATA\r\n");
     printf("%s\n",command);
     necesario = strlen(command);
@@ -240,24 +240,24 @@ char* EnviarCorreo(const char* from, const char* to,const char* subject, const c
         enviado += dfdf;
         necesario -= dfdf;
     }
-    char filebase64[1024];
-    char filebuffer[4 * ((1025 + 2) / 3)];
+    //char filebase64[4 * ((MAXBUFFERSIZE + 2) / 3)];
+    //char filebuffer[1025];
     char* name;
     while(getFileName()){
         strcpy(command,"--unique-boundary-1\r\n");
         sprintf(command+strlen(command),"Content-Type: %s; name=\"%s\"\r\n",mimeType,filename);
         sprintf(command+strlen(command),"Content-Disposition: attachment; filename=\"%s\"\r\n",filename);
         strcat(command,"Content-Transfer-Encoding: base64\r\n");
-        printf("enviando %s\n",command);
+        sprintf(estado,"enviando %s\n",command);
         SSL_write(ssl,command,strlen(command));
-        strcpy(filebuffer,filepath);
+        strcpy(bufferMensaje,filepath);
         int musicfd = open(filepath,O_RDONLY);
         int bytesRead;
-        bytesRead = read(musicfd,filebuffer,1024);
+        bytesRead = read(musicfd,bufferMensaje,MAXBUFFERSIZE);
         while(bytesRead){
-            base64_encode(filebase64,filebuffer,bytesRead);
+            base64_encode(filebase64,bufferMensaje,bytesRead);
             SSL_write(ssl,filebase64,strlen(filebase64));
-            bytesRead = read(musicfd,filename,1024);
+            bytesRead = read(musicfd,filename,MAXBUFFERSIZE);
         }
         strcpy(command,"\r\n");
         SSL_write(ssl,command,strlen(command));

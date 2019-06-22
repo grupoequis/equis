@@ -7,9 +7,14 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.storage.StorageManager;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.v4.content.CursorLoader;
+
+import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class RealPathUtil {
 
@@ -30,6 +35,43 @@ public class RealPathUtil {
         return realPath;
     }
 
+
+    /**
+     * Get external sd card path using reflection
+     * @param mContext
+     * @param is_removable is external storage removable
+     * @return
+     */
+    private static String getExternalStoragePath(Context mContext, boolean is_removable) {
+
+        StorageManager mStorageManager = (StorageManager) mContext.getSystemService(Context.STORAGE_SERVICE);
+        Class<?> storageVolumeClazz = null;
+        try {
+            storageVolumeClazz = Class.forName("android.os.storage.StorageVolume");
+            Method getVolumeList = mStorageManager.getClass().getMethod("getVolumeList");
+            Method getPath = storageVolumeClazz.getMethod("getPath");
+            Method isRemovable = storageVolumeClazz.getMethod("isRemovable");
+            Object result = getVolumeList.invoke(mStorageManager);
+            final int length = Array.getLength(result);
+            for (int i = 0; i < length; i++) {
+                Object storageVolumeElement = Array.get(result, i);
+                String path = (String) getPath.invoke(storageVolumeElement);
+                boolean removable = (Boolean) isRemovable.invoke(storageVolumeElement);
+                if (is_removable == removable) {
+                    return path;
+                }
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     @SuppressLint("NewApi")
     public static String getRealPathFromURI_API11to18(Context context, Uri contentUri) {
@@ -84,12 +126,18 @@ public class RealPathUtil {
                 final String docId = DocumentsContract.getDocumentId(uri);
                 final String[] split = docId.split(":");
                 final String type = split[0];
-
+                String pathresult = "";
                 if ("primary".equalsIgnoreCase(type)) {
-                    return Environment.getExternalStorageDirectory() + "/" + split[1];
+                    pathresult = Environment.getExternalStorageDirectory() + "/" + split[1];
+                    return pathresult;
                 }
 
-                // TODO handle non-primary volumes
+                String externalpath = getExternalStoragePath(context,true);
+                if(externalpath.contains(type)){
+                    pathresult = externalpath + "/" + split[1];
+                    return pathresult;
+
+                }
             }
             // DownloadsProvider
             else if (isDownloadsDocument(uri)) {
@@ -166,7 +214,9 @@ public class RealPathUtil {
                 final int index = cursor.getColumnIndexOrThrow(column);
                 return cursor.getString(index);
             }
-        } finally {
+        }catch(Exception ex){
+            String Message = ex.getMessage();
+        }finally {
             if (cursor != null)
                 cursor.close();
         }
