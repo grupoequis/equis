@@ -44,7 +44,6 @@ The preffered way to install this app is thwought the android studio interfase.
  and create an issue on GitHub:
 
     - APP equis version
-    - Configuration data: output of 'perl configdata.pm --dump'
     - OS Name, Version, Hardware platform
     - Compiler Details (name, version)
     - Application Details (name, version)
